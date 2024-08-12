@@ -1,6 +1,6 @@
 import { json } from "express";
 import { asyncHandler } from "../utils/asynchHandler.js"
-import ApiError from "../utils/ApiErrorResponse.js";
+import {ApiError} from "../utils/ApiErrorResponse.js";
 import { User } from "../models/user.model.js";
 import { upload } from "../middleware/multer.middleware.js";
 import uploadFile from "../utils/cloudinary.js";
@@ -27,22 +27,25 @@ const registerUser= asyncHandler( async(req,res)=>{
 }
 
   // check if user already exist
- const isUserExist=User.findOne({email})
+ const isUserExist= await User.findOne({email})
  if(isUserExist){
     throw new ApiError(409,"User already exist")
  }
 
 
   //check validation for avtar is uploaded or not=> use multer as middleware in routes
-  const avtarLocalPath=req.files?.avtar[0]?.path
-  console.log(avtarLocalPath);
+  const avtarLocalPath=req.file.path
+  
+  console.log("Avtar Local Path",avtarLocalPath);
   if(!avtarLocalPath){
     throw new ApiError(400,"Please upload your avtar")
   }
   
   // upload it on cloudinary
   const avtar=await uploadFile(avtarLocalPath)
-  if(!avtar){
+  console.log("Avtar Cloudinary controller",avtar);
+  
+  if(avtar===""){
     throw new ApiError(400,"Avtar file is required")
   }
   // create object of user-> create entry in db
