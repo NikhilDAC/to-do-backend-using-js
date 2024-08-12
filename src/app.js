@@ -13,7 +13,7 @@ app.use(cors({
     Credential:true
 }))
 
-// set up the which is comming from the request data may be in json,file,form-data etc
+// set up the  request data may be in json,file,form-data etc
 
 app.use(express.json({
     limit:"16kb"
@@ -25,7 +25,15 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.static(`public`))
+
 app.use(cookieParser())
 
+// import route
+import userRoutes from "./routes/user.routes.js"
+
+
+// define route 
+        // prefix. from here controller goes to userRoutes
+app.use("/api/v1/users",userRoutes)
 
 export default app;
